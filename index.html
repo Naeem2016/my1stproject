@@ -5,20 +5,153 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>5 vs 5 Football Game</title>
     <style>
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .teams-container { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        .team { width: 45%; border: 2px solid #333; padding: 15px; border-radius: 10px; }
-        .team-a { border-color: #007bff; }
-        .team-b { border-color: #dc3545; }
-        .players-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin: 20px 0; }
-        .player-card { border: 1px solid #ddd; padding: 10px; border-radius: 5px; cursor: pointer; }
-        .player-card:hover { background-color: #f8f9fa; }
-        .player-card.selected { background-color: #d4edda; }
-        .player-card.disabled { opacity: 0.5; cursor: not-allowed; }
-        .button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
-        .btn-primary { background-color: #007bff; color: white; }
-        .btn-success { background-color: #28a745; color: white; }
-        .btn-danger { background-color: #dc3545; color: white; }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            font-family: Arial, sans-serif;
+        }
+        .teams-container { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+        .team { 
+            width: 48%; 
+            border: 3px solid #333; 
+            padding: 20px; 
+            border-radius: 15px;
+            background-color: #f9f9f9;
+        }
+        .team-a { 
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        .team-b { 
+            border-color: #dc3545;
+            background-color: #fff0f0;
+        }
+        .players-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+            gap: 15px; 
+            margin: 30px 0; 
+        }
+        .player-card { 
+            border: 2px solid #ddd; 
+            padding: 15px; 
+            border-radius: 10px; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        .player-card:hover { 
+            background-color: #e9ecef; 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .player-card.selected { 
+            background-color: #d4edda; 
+            border-color: #28a745;
+        }
+        .player-card.disabled { 
+            opacity: 0.5; 
+            cursor: not-allowed;
+            background-color: #f8f9fa;
+        }
+        .button { 
+            padding: 12px 24px; 
+            margin: 10px 5px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn-primary { 
+            background-color: #007bff; 
+            color: white; 
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-success { 
+            background-color: #28a745; 
+            color: white; 
+        }
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
+        .btn-danger { 
+            background-color: #dc3545; 
+            color: white; 
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .team-players {
+            min-height: 200px;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: white;
+        }
+        .player-item {
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .match-result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            border: 2px solid #dee2e6;
+            display: none;
+        }
+        .score-display {
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: #333;
+        }
+        .winner {
+            color: #28a745;
+            font-size: 1.5em;
+            text-align: center;
+        }
+        .player-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .player-rating {
+            background-color: #007bff;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.9em;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
@@ -27,30 +160,279 @@
         
         <div class="teams-container">
             <div class="team team-a">
-                <h2>Team A</h2>
-                <div id="teamA-players"></div>
-                <div>Players: <span id="teamA-count">0</span>/5</div>
+                <h2>🔵 Team A</h2>
+                <div class="team-players" id="teamA-players">
+                    <em>No players selected yet</em>
+                </div>
+                <div><strong>Players: <span id="teamA-count">0</span>/5</strong></div>
+                <div><strong>Average Rating: <span id="teamA-rating">0</span></strong></div>
             </div>
             
             <div class="team team-b">
-                <h2>Team B</h2>
-                <div id="teamB-players"></div>
-                <div>Players: <span id="teamB-count">0</span>/5</div>
+                <h2>🔴 Team B</h2>
+                <div class="team-players" id="teamB-players">
+                    <em>No players selected yet</em>
+                </div>
+                <div><strong>Players: <span id="teamB-count">0</span>/5</strong></div>
+                <div><strong>Average Rating: <span id="teamB-rating">0</span></strong></div>
             </div>
         </div>
 
         <div class="controls">
-            <button class="button btn-primary" onclick="switchTeam()">Switch Team (Current: <span id="current-team">A</span>)</button>
-            <button class="button btn-success" onclick="startGame()" id="start-btn" disabled>Start Game</button>
-            <button class="button btn-danger" onclick="resetGame()">Reset Game</button>
+            <button class="button btn-primary" onclick="switchTeam()">
+                Switch to Team <span id="current-team-display">B</span>
+            </button>
+            <button class="button btn-success" onclick="startGame()" id="start-btn" disabled>
+                🎯 Start Game
+            </button>
+            <button class="button btn-danger" onclick="resetGame()">
+                🔄 Reset Game
+            </button>
         </div>
 
-        <h3>Available Players</h3>
-        <div class="players-grid" id="players-container"></div>
+        <h3>🏃 Available Players</h3>
+        <div class="players-grid" id="players-container">
+            <!-- Players will be dynamically inserted here -->
+        </div>
 
-        <div id="match-result"></div>
+        <div class="match-result" id="match-result">
+            <!-- Match results will be displayed here -->
+        </div>
     </div>
 
-    <script src="game.js"></script>
+    <script>
+        // Player database
+        const players = [
+            { id: 1, name: "Lionel Messi", position: "Forward", rating: 93 },
+            { id: 2, name: "Cristiano Ronaldo", position: "Forward", rating: 92 },
+            { id: 3, name: "Kevin De Bruyne", position: "Midfielder", rating: 91 },
+            { id: 4, name: "Virgil van Dijk", position: "Defender", rating: 89 },
+            { id: 5, name: "Manuel Neuer", position: "Goalkeeper", rating: 88 },
+            { id: 6, name: "Kylian Mbappé", position: "Forward", rating: 91 },
+            { id: 7, name: "Erling Haaland", position: "Forward", rating: 90 },
+            { id: 8, name: "Luka Modrić", position: "Midfielder", rating: 88 },
+            { id: 9, name: "Sergio Ramos", position: "Defender", rating: 87 },
+            { id: 10, name: "Alisson Becker", position: "Goalkeeper", rating: 89 },
+            { id: 11, name: "Neymar Jr", position: "Forward", rating: 89 },
+            { id: 12, name: "Robert Lewandowski", position: "Forward", rating: 91 },
+            { id: 13, name: "Mohamed Salah", position: "Forward", rating: 89 },
+            { id: 14, name: "Sadio Mané", position: "Forward", rating: 87 },
+            { id: 15, name: "Harry Kane", position: "Forward", rating: 89 }
+        ];
+
+        class FootballGame {
+            constructor() {
+                this.teamA = [];
+                this.teamB = [];
+                this.selectedPlayers = new Set();
+                this.currentTeam = 'A'; // A or B
+            }
+
+            // Initialize the game UI
+            initializeUI() {
+                this.renderPlayers();
+                this.updateTeamDisplays();
+                this.updateControls();
+            }
+
+            // Render available players
+            renderPlayers() {
+                const container = document.getElementById('players-container');
+                container.innerHTML = '';
+
+                players.forEach(player => {
+                    const isSelected = this.selectedPlayers.has(player.id);
+                    const playerCard = document.createElement('div');
+                    playerCard.className = `player-card ${isSelected ? 'disabled' : ''}`;
+                    playerCard.innerHTML = `
+                        <div class="player-info">
+                            <div>
+                                <strong>${player.name}</strong><br>
+                                <small>${player.position}</small>
+                            </div>
+                            <span class="player-rating">${player.rating}</span>
+                        </div>
+                    `;
+
+                    if (!isSelected) {
+                        playerCard.onclick = () => this.selectPlayer(player.id);
+                    }
+
+                    container.appendChild(playerCard);
+                });
+            }
+
+            // Select player for current team
+            selectPlayer(playerId) {
+                const player = players.find(p => p.id === playerId);
+                
+                if (!player || this.selectedPlayers.has(playerId)) {
+                    return;
+                }
+
+                const targetTeam = this.currentTeam === 'A' ? this.teamA : this.teamB;
+                
+                if (targetTeam.length >= 5) {
+                    alert(`Team ${this.currentTeam} is already full!`);
+                    return;
+                }
+
+                targetTeam.push(player);
+                this.selectedPlayers.add(playerId);
+
+                this.updateTeamDisplays();
+                this.renderPlayers();
+                this.updateControls();
+            }
+
+            // Update team displays
+            updateTeamDisplays() {
+                this.updateTeamDisplay('A', this.teamA);
+                this.updateTeamDisplay('B', this.teamB);
+            }
+
+            updateTeamDisplay(teamId, team) {
+                const playersContainer = document.getElementById(`team${teamId}-players`);
+                const countElement = document.getElementById(`team${teamId}-count`);
+                const ratingElement = document.getElementById(`team${teamId}-rating`);
+
+                countElement.textContent = team.length;
+                ratingElement.textContent = this.calculateTeamRating(team);
+
+                if (team.length === 0) {
+                    playersContainer.innerHTML = '<em>No players selected yet</em>';
+                } else {
+                    playersContainer.innerHTML = team.map(player => `
+                        <div class="player-item">
+                            <strong>${player.name}</strong> - ${player.position} 
+                            <span class="player-rating">${player.rating}</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Calculate team average rating
+            calculateTeamRating(team) {
+                if (team.length === 0) return '0.0';
+                const total = team.reduce((sum, player) => sum + player.rating, 0);
+                return (total / team.length).toFixed(1);
+            }
+
+            // Switch current team
+            switchTeam() {
+                this.currentTeam = this.currentTeam === 'A' ? 'B' : 'A';
+                this.updateControls();
+            }
+
+            // Update control buttons
+            updateControls() {
+                const teamDisplay = document.getElementById('current-team-display');
+                const startButton = document.getElementById('start-btn');
+
+                teamDisplay.textContent = this.currentTeam === 'A' ? 'B' : 'A';
+
+                // Enable start button only if both teams have 5 players
+                const canStart = this.teamA.length === 5 && this.teamB.length === 5;
+                startButton.disabled = !canStart;
+            }
+
+            // Start the game
+            startGame() {
+                if (this.teamA.length !== 5 || this.teamB.length !== 5) {
+                    alert("Both teams need exactly 5 players to start!");
+                    return;
+                }
+
+                this.simulateMatch();
+            }
+
+            // Simulate match
+            simulateMatch() {
+                const teamARating = parseFloat(this.calculateTeamRating(this.teamA));
+                const teamBRating = parseFloat(this.calculateTeamRating(this.teamB));
+
+                // Calculate base scores based on ratings
+                let aScore = Math.floor((teamARating / 100) * 4);
+                let bScore = Math.floor((teamBRating / 100) * 4);
+
+                // Add randomness
+                aScore += Math.floor(Math.random() * 3);
+                bScore += Math.floor(Math.random() * 3);
+
+                // Ensure minimum scores
+                aScore = Math.max(0, Math.min(aScore, 7));
+                bScore = Math.max(0, Math.min(bScore, 7));
+
+                this.displayMatchResult(aScore, bScore, teamARating, teamBRating);
+            }
+
+            // Display match result
+            displayMatchResult(aScore, bScore, teamARating, teamBRating) {
+                const resultElement = document.getElementById('match-result');
+                let winner = '';
+
+                if (aScore > bScore) {
+                    winner = '🎉 Team A Wins!';
+                } else if (bScore > aScore) {
+                    winner = '🎉 Team B Wins!';
+                } else {
+                    winner = '🤝 It\'s a Draw!';
+                }
+
+                resultElement.innerHTML = `
+                    <h2>🏆 Match Result</h2>
+                    <div class="score-display">
+                        Team A ${aScore} - ${bScore} Team B
+                    </div>
+                    <div class="winner">${winner}</div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <strong>Team Ratings:</strong><br>
+                        Team A: ${teamARating} | Team B: ${teamBRating}
+                    </div>
+                `;
+                resultElement.style.display = 'block';
+
+                // Scroll to result
+                resultElement.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // Reset the game
+            resetGame() {
+                this.teamA = [];
+                this.teamB = [];
+                this.selectedPlayers = new Set();
+                this.currentTeam = 'A';
+                
+                this.initializeUI();
+                
+                const resultElement = document.getElementById('match-result');
+                resultElement.style.display = 'none';
+            }
+        }
+
+        // Initialize game
+        let game;
+
+        function initializeGame() {
+            game = new FootballGame();
+            game.initializeUI();
+        }
+
+        // Global functions for buttons
+        function switchTeam() {
+            game.switchTeam();
+        }
+
+        function startGame() {
+            game.startGame();
+        }
+
+        function resetGame() {
+            game.resetGame();
+        }
+
+        // Start the game when page loads
+        window.onload = initializeGame;
+    </script>
 </body>
 </html>
