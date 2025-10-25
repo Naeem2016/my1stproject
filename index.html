@@ -3,436 +3,936 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5 vs 5 Football Game</title>
+    <title>Liverpool vs Manchester United - 5 vs 5 (2025)</title>
     <style>
-        .container { 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            padding: 20px; 
-            font-family: Arial, sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .teams-container { 
-            display: flex; 
-            justify-content: space-between; 
-            margin-bottom: 30px;
-            gap: 20px;
-        }
-        .team { 
-            width: 48%; 
-            border: 3px solid #333; 
-            padding: 20px; 
-            border-radius: 15px;
-            background-color: #f9f9f9;
-        }
-        .team-a { 
-            border-color: #007bff;
-            background-color: #f0f8ff;
-        }
-        .team-b { 
-            border-color: #dc3545;
-            background-color: #fff0f0;
-        }
-        .players-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
-            gap: 15px; 
-            margin: 30px 0; 
-        }
-        .player-card { 
-            border: 2px solid #ddd; 
-            padding: 15px; 
-            border-radius: 10px; 
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background-color: white;
-        }
-        .player-card:hover { 
-            background-color: #e9ecef; 
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .player-card.selected { 
-            background-color: #d4edda; 
-            border-color: #28a745;
-        }
-        .player-card.disabled { 
-            opacity: 0.5; 
-            cursor: not-allowed;
-            background-color: #f8f9fa;
-        }
-        .button { 
-            padding: 12px 24px; 
-            margin: 10px 5px; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        .btn-primary { 
-            background-color: #007bff; 
-            color: white; 
-        }
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-        .btn-success { 
-            background-color: #28a745; 
-            color: white; 
-        }
-        .btn-success:hover {
-            background-color: #1e7e34;
-        }
-        .btn-danger { 
-            background-color: #dc3545; 
-            color: white; 
-        }
-        .btn-danger:hover {
-            background-color: #c82333;
-        }
-        .btn:disabled {
-            background-color: #6c757d;
-            cursor: not-allowed;
-        }
-        .team-players {
-            min-height: 200px;
-            border: 1px dashed #ccc;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 10px 0;
-            background-color: white;
-        }
-        .player-item {
-            padding: 8px;
-            margin: 5px 0;
-            background-color: #e9ecef;
-            border-radius: 5px;
-            border-left: 4px solid #007bff;
-        }
-        .match-result {
-            margin-top: 30px;
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
             padding: 20px;
-            border-radius: 10px;
-            background-color: #f8f9fa;
-            border: 2px solid #dee2e6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .game-header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            background: linear-gradient(to right, #C8102E, #F6EB61);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .teams-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .team-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .liverpool-logo {
+            background: linear-gradient(135deg, #C8102E, #F6EB61);
+            color: #C8102E;
+        }
+
+        .manutd-logo {
+            background: linear-gradient(135deg, #DA291C, #FBE122);
+            color: #DA291C;
+        }
+
+        .vs-text {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .game-phase {
             display: none;
         }
-        .score-display {
-            font-size: 2em;
-            font-weight: bold;
-            text-align: center;
-            margin: 20px 0;
-            color: #333;
+
+        .game-phase.active {
+            display: block;
         }
-        .winner {
-            color: #28a745;
-            font-size: 1.5em;
-            text-align: center;
+
+        /* Team Selection Styles */
+        .teams-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 30px;
         }
+
+        .team {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .team-liverpool { 
+            border-color: #C8102E;
+            background: rgba(200, 16, 46, 0.2);
+        }
+
+        .team-manutd { 
+            border-color: #DA291C;
+            background: rgba(218, 41, 28, 0.2);
+        }
+
+        .team h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .formation-display {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .team-players {
+            min-height: 250px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .player-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .team-liverpool .player-item { border-left-color: #C8102E; }
+        .team-manutd .player-item { border-left-color: #DA291C; }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .player-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .player-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .player-card.selected {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4CAF50;
+        }
+
+        .player-card.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
         .player-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+
         .player-rating {
-            background-color: #007bff;
+            background: #FF9800;
             color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
+            padding: 3px 10px;
+            border-radius: 15px;
             font-size: 0.9em;
+            font-weight: bold;
         }
-        h1, h2, h3 {
-            color: #333;
+
+        .player-position {
+            font-size: 0.8em;
+            opacity: 0.8;
+            margin-top: 5px;
         }
+
         .controls {
             text-align: center;
+            margin: 30px 0;
+        }
+
+        .button {
+            padding: 15px 30px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #FF5252, #FF4081);
+            color: white;
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Game Field Styles */
+        .game-field-container {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin: 20px 0;
             padding: 20px;
-            background-color: #f8f9fa;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        .score-board {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .time-display {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .game-field {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(135deg, #2E7D32, #4CAF50);
+            border: 4px solid #FFF;
             border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .field-markings {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+        }
+
+        .center-spot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+        }
+
+        .goal {
+            position: absolute;
+            width: 150px;
+            height: 60px;
+            border: 3px solid rgba(255, 255, 255, 0.7);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .goal-liverpool {
+            left: 0;
+            border-right: none;
+        }
+
+        .goal-manutd {
+            right: 0;
+            border-left: none;
+        }
+
+        .player-on-field {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid;
+            z-index: 10;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .player-on-field.liverpool {
+            background: linear-gradient(45deg, #C8102E, #9c0c23);
+            border-color: #F6EB61;
+        }
+
+        .player-on-field.manutd {
+            background: linear-gradient(45deg, #DA291C, #a81f15);
+            border-color: #FBE122;
+        }
+
+        .player-on-field:hover {
+            transform: scale(1.1);
+            z-index: 20;
+        }
+
+        .player-on-field.selected {
+            box-shadow: 0 0 20px gold;
+            transform: scale(1.2);
+            z-index: 30;
+        }
+
+        .ball {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            z-index: 5;
+            transition: all 0.5s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .game-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px 40px;
+            border-radius: 10px;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            z-index: 100;
+            display: none;
+        }
+
+        .match-events {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .event-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            border-left: 4px solid #FF9800;
+        }
+
+        /* Results Screen */
+        .results-screen {
+            text-align: center;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+        }
+
+        .winner-trophy {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .final-score {
+            font-size: 3em;
+            margin: 20px 0;
+        }
+
+        .team-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            flex: 1;
+            margin: 0 10px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        .instructions {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .player-age {
+            font-size: 0.7em;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .player-stats {
+            font-size: 0.7em;
+            opacity: 0.8;
+            margin-top: 3px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>⚽ 5 vs 5 Football Game</h1>
-        
-        <div class="teams-container">
-            <div class="team team-a">
-                <h2>🔵 Team A</h2>
-                <div class="team-players" id="teamA-players">
-                    <em>No players selected yet</em>
-                </div>
-                <div><strong>Players: <span id="teamA-count">0</span>/5</strong></div>
-                <div><strong>Average Rating: <span id="teamA-rating">0</span></strong></div>
+        <!-- Team Selection Phase -->
+        <div id="selection-phase" class="game-phase active">
+            <div class="game-header">
+                <h1>Liverpool vs Manchester United</h1>
+                <div class="subtitle">2025 Season - 5 vs 5 Match</div>
+                <p>Select your teams for the epic clash! Formation: 1 GK, 1 DEF, 3 ATT</p>
             </div>
-            
-            <div class="team team-b">
-                <h2>🔴 Team B</h2>
-                <div class="team-players" id="teamB-players">
-                    <em>No players selected yet</em>
+
+            <div class="teams-banner">
+                <div class="team-logo liverpool-logo">LFC</div>
+                <div class="vs-text">VS</div>
+                <div class="team-logo manutd-logo">MUFC</div>
+            </div>
+
+            <div class="teams-container">
+                <div class="team team-liverpool">
+                    <h2>🔴 Liverpool 2025</h2>
+                    <div class="formation-display">Formation: 1-1-3 (GK - DEF - 3 ATT)</div>
+                    <div class="team-players" id="liverpool-players">
+                        <em>No players selected yet</em>
+                    </div>
+                    <div><strong>Players: <span id="liverpool-count">0</span>/5</strong></div>
+                    <div><strong>Average Rating: <span id="liverpool-rating">0</span></strong></div>
                 </div>
-                <div><strong>Players: <span id="teamB-count">0</span>/5</strong></div>
-                <div><strong>Average Rating: <span id="teamB-rating">0</span></strong></div>
+                
+                <div class="team team-manutd">
+                    <h2>🔴 Manchester United 2025</h2>
+                    <div class="formation-display">Formation: 1-1-3 (GK - DEF - 3 ATT)</div>
+                    <div class="team-players" id="manutd-players">
+                        <em>No players selected yet</em>
+                    </div>
+                    <div><strong>Players: <span id="manutd-count">0</span>/5</strong></div>
+                    <div><strong>Average Rating: <span id="manutd-rating">0</span></strong></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="button btn-primary" onclick="switchTeam()">
+                    Switch to <span id="current-team-display">Manchester United</span>
+                </button>
+                <button class="button btn-success" onclick="startMatch()" id="start-btn" disabled>
+                    🎯 Start Match
+                </button>
+                <button class="button btn-danger" onclick="resetSelection()">
+                    🔄 Reset Teams
+                </button>
+            </div>
+
+            <h3>🏃 Available Players (2025 Projected Squads)</h3>
+            <div class="players-grid" id="players-container">
+                <!-- Players will be dynamically inserted here -->
             </div>
         </div>
 
-        <div class="controls">
-            <button class="button btn-primary" onclick="switchTeam()">
-                Switch to Team <span id="current-team-display">B</span>
-            </button>
-            <button class="button btn-success" onclick="startGame()" id="start-btn" disabled>
-                🎯 Start Game
-            </button>
-            <button class="button btn-danger" onclick="resetGame()">
-                🔄 Reset Game
-            </button>
+        <!-- Game Play Phase -->
+        <div id="game-phase" class="game-phase">
+            <div class="game-header">
+                <h1>Liverpool vs Manchester United</h1>
+                <div class="subtitle">2025 Season - Match Live!</div>
+            </div>
+
+            <div class="game-info">
+                <div class="score-board">
+                    <span id="score-liverpool">0</span> - <span id="score-manutd">0</span>
+                </div>
+                <div class="time-display">
+                    ⏱️ <span id="game-time">00:00</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="shootBall()">🎯 Shoot</button>
+                    <button class="action-btn" onclick="passBall()">⇄ Pass</button>
+                    <button class="action-btn" onclick="pauseGame()" id="pause-btn">⏸️ Pause</button>
+                    <button class="action-btn" onclick="endGame()" id="end-btn">⏹️ End Game</button>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <p>Click on a player to select them, then use the Shoot or Pass buttons to perform actions!</p>
+            </div>
+
+            <div class="game-field-container">
+                <div class="game-field" id="game-field">
+                    <div class="field-markings"></div>
+                    <div class="center-circle"></div>
+                    <div class="center-spot"></div>
+                    <div class="goal goal-liverpool"></div>
+                    <div class="goal goal-manutd"></div>
+                    <!-- Players and ball will be dynamically added here -->
+                </div>
+            </div>
+
+            <div class="match-events" id="match-events">
+                <div class="event-item">Match started! Good luck to both teams!</div>
+            </div>
+
+            <div class="game-message" id="game-message"></div>
         </div>
 
-        <h3>🏃 Available Players</h3>
-        <div class="players-grid" id="players-container">
-            <!-- Players will be dynamically inserted here -->
-        </div>
+        <!-- Results Phase -->
+        <div id="results-phase" class="game-phase">
+            <div class="results-screen">
+                <div class="winner-trophy" id="winner-trophy">🏆</div>
+                <h1 id="winner-text">Match Finished!</h1>
+                <div class="final-score" id="final-score">0 - 0</div>
+                
+                <div class="team-stats">
+                    <div class="stat-card">
+                        <h3>Liverpool 2025</h3>
+                        <p>Goals: <span id="stats-liverpool-goals">0</span></p>
+                        <p>Shots: <span id="stats-liverpool-shots">0</span></p>
+                        <p>Possession: <span id="stats-liverpool-possession">0%</span></p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Manchester United 2025</h3>
+                        <p>Goals: <span id="stats-manutd-goals">0</span></p>
+                        <p>Shots: <span id="stats-manutd-shots">0</span></p>
+                        <p>Possession: <span id="stats-manutd-possession">0%</span></p>
+                    </div>
+                </div>
 
-        <div class="match-result" id="match-result">
-            <!-- Match results will be displayed here -->
+                <div class="controls">
+                    <button class="button btn-primary" onclick="playAgain()">
+                        🔄 Play Again
+                    </button>
+                    <button class="button btn-danger" onclick="backToSelection()">
+                        📋 New Teams
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Player database
-        const players = [
-            { id: 1, name: "Lionel Messi", position: "Forward", rating: 93 },
-            { id: 2, name: "Cristiano Ronaldo", position: "Forward", rating: 92 },
-            { id: 3, name: "Kevin De Bruyne", position: "Midfielder", rating: 91 },
-            { id: 4, name: "Virgil van Dijk", position: "Defender", rating: 89 },
-            { id: 5, name: "Manuel Neuer", position: "Goalkeeper", rating: 88 },
-            { id: 6, name: "Kylian Mbappé", position: "Forward", rating: 91 },
-            { id: 7, name: "Erling Haaland", position: "Forward", rating: 90 },
-            { id: 8, name: "Luka Modrić", position: "Midfielder", rating: 88 },
-            { id: 9, name: "Sergio Ramos", position: "Defender", rating: 87 },
-            { id: 10, name: "Alisson Becker", position: "Goalkeeper", rating: 89 },
-            { id: 11, name: "Neymar Jr", position: "Forward", rating: 89 },
-            { id: 12, name: "Robert Lewandowski", position: "Forward", rating: 91 },
-            { id: 13, name: "Mohamed Salah", position: "Forward", rating: 89 },
-            { id: 14, name: "Sadio Mané", position: "Forward", rating: 87 },
-            { id: 15, name: "Harry Kane", position: "Forward", rating: 89 }
+        // Projected 2025 player database for Liverpool and Manchester United
+        const liverpoolPlayers = [
+            { id: 1, name: "Alisson", position: "Goalkeeper", rating: 90, speed: 68, shooting: 45, passing: 88, age: 32 },
+            { id: 2, name: "Van Dijk", position: "Defender", rating: 88, speed: 76, shooting: 68, passing: 78, age: 33 },
+            { id: 3, name: "Alexander-Arnold", position: "Defender", rating: 89, speed: 82, shooting: 82, passing: 90, age: 26 },
+            { id: 4, name: "Núñez", position: "Forward", rating: 87, speed: 88, shooting: 86, passing: 75, age: 25 },
+            { id: 5, name: "Diaz", position: "Forward", rating: 86, speed: 90, shooting: 83, passing: 80, age: 27 },
+            { id: 6, name: "Gakpo", position: "Forward", rating: 85, speed: 82, shooting: 84, passing: 82, age: 25 },
+            { id: 7, name: "Mac Allister", position: "Midfielder", rating: 86, speed: 78, shooting: 80, passing: 87, age: 26 },
+            { id: 8, name: "Szoboszlai", position: "Midfielder", rating: 87, speed: 80, shooting: 85, passing: 86, age: 24 },
+            { id: 9, name: "Konaté", position: "Defender", rating: 85, speed: 82, shooting: 65, passing: 75, age: 25 },
+            { id: 10, name: "Jota", position: "Forward", rating: 86, speed: 85, shooting: 85, passing: 78, age: 28 }
+        ];
+
+        const manutdPlayers = [
+            { id: 11, name: "Onana", position: "Goalkeeper", rating: 86, speed: 70, shooting: 40, passing: 85, age: 29 },
+            { id: 12, name: "Martínez", position: "Defender", rating: 85, speed: 78, shooting: 65, passing: 82, age: 27 },
+            { id: 13, name: "Dalot", position: "Defender", rating: 84, speed: 83, shooting: 72, passing: 82, age: 25 },
+            { id: 14, name: "Højlund", position: "Forward", rating: 86, speed: 84, shooting: 85, passing: 72, age: 22 },
+            { id: 15, name: "Rashford", position: "Forward", rating: 85, speed: 91, shooting: 84, passing: 78, age: 27 },
+            { id: 16, name: "Garnacho", position: "Forward", rating: 84, speed: 89, shooting: 82, passing: 79, age: 20 },
+            { id: 17, name: "Fernandes", position: "Midfielder", rating: 88, speed: 76, shooting: 86, passing: 90, age: 30 },
+            { id: 18, name: "Mainoo", position: "Midfielder", rating: 83, speed: 80, shooting: 75, passing: 84, age: 20 },
+            { id: 19, name: "Mount", position: "Midfielder", rating: 84, speed: 79, shooting: 80, passing: 85, age: 26 },
+            { id: 20, name: "Shaw", position: "Defender", rating: 83, speed: 79, shooting: 70, passing: 82, age: 29 }
         ];
 
         class FootballGame {
             constructor() {
-                this.teamA = [];
-                this.teamB = [];
+                this.liverpool = [];
+                this.manutd = [];
                 this.selectedPlayers = new Set();
-                this.currentTeam = 'A'; // A or B
+                this.currentTeam = 'liverpool';
+                this.gameState = 'selection';
+                this.score = { liverpool: 0, manutd: 0 };
+                this.time = 0;
+                this.gameInterval = null;
+                this.selectedPlayer = null;
+                this.ballPosition = { x: 50, y: 50 };
+                this.possession = { liverpool: 0, manutd: 0 };
+                this.shots = { liverpool: 0, manutd: 0 };
+                this.events = [];
             }
 
-            // Initialize the game UI
-            initializeUI() {
+            initializeSelection() {
                 this.renderPlayers();
                 this.updateTeamDisplays();
                 this.updateControls();
             }
 
-            // Render available players
             renderPlayers() {
                 const container = document.getElementById('players-container');
                 container.innerHTML = '';
 
-                players.forEach(player => {
+                // Render Liverpool players
+                liverpoolPlayers.forEach(player => {
                     const isSelected = this.selectedPlayers.has(player.id);
                     const playerCard = document.createElement('div');
                     playerCard.className = `player-card ${isSelected ? 'disabled' : ''}`;
                     playerCard.innerHTML = `
                         <div class="player-info">
                             <div>
-                                <strong>${player.name}</strong><br>
-                                <small>${player.position}</small>
+                                <strong>${player.name}</strong>
+                                <div class="player-position">${player.position} | Age: ${player.age}</div>
+                                <div class="player-stats">SPD:${player.speed} SHO:${player.shooting} PAS:${player.passing}</div>
                             </div>
                             <span class="player-rating">${player.rating}</span>
                         </div>
                     `;
 
                     if (!isSelected) {
-                        playerCard.onclick = () => this.selectPlayer(player.id);
+                        playerCard.onclick = () => this.selectPlayer(player.id, 'liverpool');
+                    }
+
+                    container.appendChild(playerCard);
+                });
+
+                // Render Manchester United players
+                manutdPlayers.forEach(player => {
+                    const isSelected = this.selectedPlayers.has(player.id);
+                    const playerCard = document.createElement('div');
+                    playerCard.className = `player-card ${isSelected ? 'disabled' : ''}`;
+                    playerCard.innerHTML = `
+                        <div class="player-info">
+                            <div>
+                                <strong>${player.name}</strong>
+                                <div class="player-position">${player.position} | Age: ${player.age}</div>
+                                <div class="player-stats">SPD:${player.speed} SHO:${player.shooting} PAS:${player.passing}</div>
+                            </div>
+                            <span class="player-rating">${player.rating}</span>
+                        </div>
+                    `;
+
+                    if (!isSelected) {
+                        playerCard.onclick = () => this.selectPlayer(player.id, 'manutd');
                     }
 
                     container.appendChild(playerCard);
                 });
             }
 
-            // Select player for current team
-            selectPlayer(playerId) {
-                const player = players.find(p => p.id === playerId);
-                
-                if (!player || this.selectedPlayers.has(playerId)) {
+            selectPlayer(playerId, team) {
+                const player = team === 'liverpool' 
+                    ? liverpoolPlayers.find(p => p.id === playerId)
+                    : manutdPlayers.find(p => p.id === playerId);
+                    
+                if (!player || this.selectedPlayers.has(playerId)) return;
+
+                const targetTeam = team === 'liverpool' ? this.liverpool : this.manutd;
+                if (targetTeam.length >= 5) {
+                    this.showMessage(`${team === 'liverpool' ? 'Liverpool' : 'Manchester United'} is full!`, 2000);
                     return;
                 }
 
-                const targetTeam = this.currentTeam === 'A' ? this.teamA : this.teamB;
-                
-                if (targetTeam.length >= 5) {
-                    alert(`Team ${this.currentTeam} is already full!`);
+                // Check if we already have players in required positions
+                const positions = targetTeam.map(p => p.position);
+                const gkCount = positions.filter(p => p === 'Goalkeeper').length;
+                const defCount = positions.filter(p => p === 'Defender').length;
+                const fwdCount = positions.filter(p => p === 'Forward').length;
+                const midCount = positions.filter(p => p === 'Midfielder').length;
+
+                // Enforce formation: 1 GK, 1 DEF, 3 ATT (Forwards/Midfielders)
+                if (player.position === 'Goalkeeper' && gkCount >= 1) {
+                    this.showMessage("Already have a goalkeeper!", 2000);
+                    return;
+                }
+                if (player.position === 'Defender' && defCount >= 1) {
+                    this.showMessage("Already have a defender!", 2000);
+                    return;
+                }
+                if ((player.position === 'Forward' || player.position === 'Midfielder') && (fwdCount + midCount) >= 3) {
+                    this.showMessage("Already have 3 attackers!", 2000);
                     return;
                 }
 
                 targetTeam.push(player);
                 this.selectedPlayers.add(playerId);
-
                 this.updateTeamDisplays();
                 this.renderPlayers();
                 this.updateControls();
+                
+                this.showMessage(`${player.name} added to ${team === 'liverpool' ? 'Liverpool' : 'Manchester United'}!`, 1500);
             }
 
-            // Update team displays
             updateTeamDisplays() {
-                this.updateTeamDisplay('A', this.teamA);
-                this.updateTeamDisplay('B', this.teamB);
+                this.updateTeamDisplay('liverpool', this.liverpool);
+                this.updateTeamDisplay('manutd', this.manutd);
             }
 
-            updateTeamDisplay(teamId, team) {
-                const playersContainer = document.getElementById(`team${teamId}-players`);
-                const countElement = document.getElementById(`team${teamId}-count`);
-                const ratingElement = document.getElementById(`team${teamId}-rating`);
+            updateTeamDisplay(team, players) {
+                const playersContainer = document.getElementById(`${team}-players`);
+                const countElement = document.getElementById(`${team}-count`);
+                const ratingElement = document.getElementById(`${team}-rating`);
 
-                countElement.textContent = team.length;
-                ratingElement.textContent = this.calculateTeamRating(team);
+                countElement.textContent = players.length;
+                ratingElement.textContent = this.calculateTeamRating(players);
 
-                if (team.length === 0) {
+                if (players.length === 0) {
                     playersContainer.innerHTML = '<em>No players selected yet</em>';
                 } else {
-                    playersContainer.innerHTML = team.map(player => `
+                    playersContainer.innerHTML = players.map(player => `
                         <div class="player-item">
-                            <strong>${player.name}</strong> - ${player.position} 
+                            <div>
+                                <strong>${player.name}</strong>
+                                <div class="player-position">${player.position}</div>
+                            </div>
                             <span class="player-rating">${player.rating}</span>
                         </div>
                     `).join('');
                 }
             }
 
-            // Calculate team average rating
             calculateTeamRating(team) {
                 if (team.length === 0) return '0.0';
                 const total = team.reduce((sum, player) => sum + player.rating, 0);
                 return (total / team.length).toFixed(1);
             }
 
-            // Switch current team
             switchTeam() {
-                this.currentTeam = this.currentTeam === 'A' ? 'B' : 'A';
+                this.currentTeam = this.currentTeam === 'liverpool' ? 'manutd' : 'liverpool';
                 this.updateControls();
+                this.showMessage(`Now selecting for ${this.currentTeam === 'liverpool' ? 'Liverpool' : 'Manchester United'}`, 1500);
             }
 
-            // Update control buttons
             updateControls() {
                 const teamDisplay = document.getElementById('current-team-display');
                 const startButton = document.getElementById('start-btn');
 
-                teamDisplay.textContent = this.currentTeam === 'A' ? 'B' : 'A';
-
-                // Enable start button only if both teams have 5 players
-                const canStart = this.teamA.length === 5 && this.teamB.length === 5;
-                startButton.disabled = !canStart;
+                teamDisplay.textContent = this.currentTeam === 'liverpool' ? 'Manchester United' : 'Liverpool';
+                startButton.disabled = !(this.liverpool.length === 5 && this.manutd.length === 5);
             }
 
-            // Start the game
-            startGame() {
-                if (this.teamA.length !== 5 || this.teamB.length !== 5) {
-                    alert("Both teams need exactly 5 players to start!");
+            startMatch() {
+                if (this.liverpool.length !== 5 || this.manutd.length !== 5) {
+                    this.showMessage("Both teams need 5 players!", 3000);
                     return;
                 }
 
-                this.simulateMatch();
+                this.switchPhase('game-phase');
+                this.initializeGame();
             }
 
-            // Simulate match
-            simulateMatch() {
-                const teamARating = parseFloat(this.calculateTeamRating(this.teamA));
-                const teamBRating = parseFloat(this.calculateTeamRating(this.teamB));
+            initializeGame() {
+                this.score = { liverpool: 0, manutd: 0 };
+                this.time = 0;
+                this.possession = { liverpool: 0, manutd: 0 };
+                this.shots = { liverpool: 0, manutd: 0 };
+                this.events = ['2025 Season Match started! The future of football is here!'];
+                this.updateEvents();
 
-                // Calculate base scores based on ratings
-                let aScore = Math.floor((teamARating / 100) * 4);
-                let bScore = Math.floor((teamBRating / 100) * 4);
-
-                // Add randomness
-                aScore += Math.floor(Math.random() * 3);
-                bScore += Math.floor(Math.random() * 3);
-
-                // Ensure minimum scores
-                aScore = Math.max(0, Math.min(aScore, 7));
-                bScore = Math.max(0, Math.min(bScore, 7));
-
-                this.displayMatchResult(aScore, bScore, teamARating, teamBRating);
+                this.setupField();
+                this.startGameTimer();
+                this.addEvent("The match kicks off at Anfield!");
             }
 
-            // Display match result
-            displayMatchResult(aScore, bScore, teamARating, teamBRating) {
-                const resultElement = document.getElementById('match-result');
-                let winner = '';
-
-                if (aScore > bScore) {
-                    winner = '🎉 Team A Wins!';
-                } else if (bScore > aScore) {
-                    winner = '🎉 Team B Wins!';
-                } else {
-                    winner = '🤝 It\'s a Draw!';
-                }
-
-                resultElement.innerHTML = `
-                    <h2>🏆 Match Result</h2>
-                    <div class="score-display">
-                        Team A ${aScore} - ${bScore} Team B
-                    </div>
-                    <div class="winner">${winner}</div>
-                    <div style="text-align: center; margin-top: 20px;">
-                        <strong>Team Ratings:</strong><br>
-                        Team A: ${teamARating} | Team B: ${teamBRating}
-                    </div>
+            setupField() {
+                const field = document.getElementById('game-field');
+                field.innerHTML = `
+                    <div class="field-markings"></div>
+                    <div class="center-circle"></div>
+                    <div class="center-spot"></div>
+                    <div class="goal goal-liverpool"></div>
+                    <div class="goal goal-manutd"></div>
                 `;
-                resultElement.style.display = 'block';
 
-                // Scroll to result
-                resultElement.scrollIntoView({ behavior: 'smooth' });
+                // Position players on field with 1-1-3 formation
+                const liverpoolFormation = [
+                    { x: 10, y: 50 },  // GK
+                    { x: 25, y: 50 },  // DEF
+                    { x: 45, y: 30 },  // ATT
+                    { x: 45, y: 50 },  // ATT
+                    { x: 45, y: 70 }   // ATT
+                ];
+
+                const manutdFormation = [
+                    { x: 90, y: 50 },  // GK
+                    { x: 75, y: 50 },  // DEF
+                    { x: 55, y: 30 },  // ATT
+                    { x: 55, y: 50 },  // ATT
+                    { x: 55, y: 70 }   // ATT
+                ];
+
+                this.liverpool.forEach((player, index) => {
+                    const pos = liverpoolFormation[index];
+                    this.createPlayerOnField(player, 'liverpool', pos, index);
+                });
+
+                this.manutd.forEach((player, index) => {
+                    const pos = manutdFormation[index];
+                    this.createPlayerOnField(player, 'manutd', pos, index);
+                });
+
+                // Add ball
+                this.createBall();
             }
 
-            // Reset the game
-            resetGame() {
-                this.teamA = [];
-                this.teamB = [];
-                this.selectedPlayers = new Set();
-                this.currentTeam = 'A';
-                
-                this.initializeUI();
-                
-                const resultElement = document.getElementById('match-result');
-                resultElement.style.display = 'none';
+            createPlayerOnField(player, team, position, index) {
+                const field = document.getElementById('game-field');
+                const playerElement = document.createElement('div');
+                playerElement.className = `player-on-field ${team}`;
+                playerElement.style.left = `${position.x}%`;
+                playerElement.style.top = `${position.y}%`;
+                playerElement.innerHTML = player.name.split(' ').map(n => n[0]).join('');
+                playerElement.title = `${player.name} (${player.position}) - ${team === 'liverpool' ? 'Liverpool' : 'Man Utd'}`;
+
+                playerElement.onclick = (e) => {
+                    e.stopPropagation();
+                    this.selectPlayerOnField(playerElement, player, team);
+                };
+
+                field.appendChild(playerElement);
             }
-        }
 
-        // Initialize game
-        let game;
+            createBall() {
+                const field = document.getElementById('game-field');
+                const ball = document.createElement('div');
+                ball.className = 'ball';
+                ball.id = 'ball';
+                ball.style.left = `${this.ballPosition.x}%`;
+                ball.style.top = `${this.ballPosition.y}%`;
+                field.appendChild(ball);
+            }
 
-        function initializeGame() {
-            game = new FootballGame();
-            game.initializeUI();
-        }
+            selectPlayerOnField(playerElement, player, team) {
+                // Deselect previous player
+                document.querySelectorAll('.player-on-field.selected').forEach(el => {
+                    el.classList.remove('selected');
+                });
 
-        // Global functions for buttons
-        function switchTeam() {
-            game.switchTeam();
-        }
-
-        function startGame() {
-            game.startGame();
-        }
-
-        function resetGame() {
-            game.resetGame();
-        }
-
-        // Start the game when page loads
-        window.onload = initializeGame;
-    </script>
-</body>
-</html>
+                // Select new player
+                playerElement.classList.add('selected');
+                this.selectedPlayer = { element: playerElement, player, team };
+                this.showMessage(`${player.name} (${team === 'liverpool' ? 'Liverpool' : '
