@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playable Football Game - Liverpool vs Manchester United</title>
+    <title>Liverpool vs Manchester United - Soccer Game</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -17,7 +17,6 @@
             color: white;
             min-height: 100vh;
             padding: 20px;
-            overflow-x: hidden;
         }
 
         .container {
@@ -29,22 +28,51 @@
             text-align: center;
             margin-bottom: 20px;
             padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.5);
             border-radius: 15px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
         }
 
         .header h1 {
-            font-size: 2.5em;
+            font-size: 2.8em;
             margin-bottom: 10px;
-            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
-        .instructions {
-            text-align: center;
-            margin: 15px 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+        .teams-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .team-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .liverpool-logo {
+            background: linear-gradient(135deg, #C8102E, #F6EB61);
+            color: #C8102E;
+        }
+
+        .manutd-logo {
+            background: linear-gradient(135deg, #DA291C, #FBE122);
+            color: #DA291C;
+        }
+
+        .vs-text {
+            font-size: 2em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
         .game-info {
@@ -58,12 +86,13 @@
         }
 
         .score {
-            font-size: 2em;
+            font-size: 2.2em;
             font-weight: bold;
         }
 
         .time {
-            font-size: 1.2em;
+            font-size: 1.3em;
+            font-weight: bold;
         }
 
         .controls {
@@ -93,23 +122,38 @@
             transform: none;
         }
 
+        .instructions {
+            text-align: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 1.1em;
+        }
+
+        .game-field-container {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
         .game-field {
             width: 100%;
-            height: 600px;
-            background: #2E7D32;
+            height: 500px;
+            background: linear-gradient(135deg, #2E7D32, #4CAF50);
             border: 4px solid white;
             border-radius: 10px;
             margin: 20px 0;
             position: relative;
             overflow: hidden;
-            cursor: pointer;
         }
 
         .field-markings {
             position: absolute;
             width: 100%;
             height: 100%;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
 
         .center-circle {
@@ -119,7 +163,7 @@
             transform: translate(-50%, -50%);
             width: 100px;
             height: 100px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
             border-radius: 50%;
         }
 
@@ -137,54 +181,72 @@
         .goal {
             position: absolute;
             width: 150px;
-            height: 80px;
+            height: 70px;
             border: 3px solid rgba(255, 255, 255, 0.7);
             top: 50%;
             transform: translateY(-50%);
         }
 
-        .goal-left {
+        .goal-liverpool {
             left: 0;
             border-right: none;
         }
 
-        .goal-right {
+        .goal-manutd {
+            right: 0;
+            border-left: none;
+        }
+
+        .penalty-area {
+            position: absolute;
+            width: 200px;
+            height: 120px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .penalty-area-liverpool {
+            left: 0;
+            border-right: none;
+        }
+
+        .penalty-area-manutd {
             right: 0;
             border-left: none;
         }
 
         .player {
             position: absolute;
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 0.9em;
+            font-size: 0.8em;
             cursor: pointer;
             transition: all 0.2s ease;
             border: 3px solid;
             z-index: 10;
-            user-select: none;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         }
 
         .player.liverpool {
-            background: #C8102E;
+            background: linear-gradient(135deg, #C8102E, #9c0c23);
             border-color: #F6EB61;
-            color: white;
         }
 
         .player.manutd {
-            background: #DA291C;
+            background: linear-gradient(135deg, #DA291C, #a81f15);
             border-color: #FBE122;
-            color: white;
         }
 
         .player.selected {
             box-shadow: 0 0 20px gold;
-            transform: scale(1.1);
+            transform: scale(1.2);
             z-index: 20;
         }
 
@@ -194,8 +256,8 @@
 
         .ball {
             position: absolute;
-            width: 25px;
-            height: 25px;
+            width: 22px;
+            height: 22px;
             background: white;
             border-radius: 50%;
             z-index: 15;
@@ -210,9 +272,9 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.9);
-            padding: 30px 50px;
+            padding: 25px 45px;
             border-radius: 15px;
-            font-size: 1.8em;
+            font-size: 1.6em;
             font-weight: bold;
             text-align: center;
             z-index: 100;
@@ -282,17 +344,40 @@
         .celebrating {
             animation: celebrate 0.5s ease-in-out 3;
         }
+
+        .player-name {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7em;
+            white-space: nowrap;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 6px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .player:hover .player-name {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>⚽ Liverpool vs Manchester United</h1>
-            <p>Fully Playable Football Game - Control players and score goals!</p>
+            <p>Premier League Soccer Game - Control Real Players!</p>
+        </div>
+
+        <div class="teams-banner">
+            <div class="team-logo liverpool-logo">LFC</div>
+            <div class="vs-text">VS</div>
+            <div class="team-logo manutd-logo">MUFC</div>
         </div>
 
         <div class="instructions">
-            <strong>HOW TO PLAY:</strong> Click a player to select, use arrow buttons to move, press SPACE to shoot when near opponent's goal!
+            <strong>HOW TO PLAY:</strong> Click a player to select, use ARROW KEYS to move, press SPACE to shoot when near opponent's goal!
         </div>
 
         <div class="game-info">
@@ -313,24 +398,29 @@
             <button class="movement-btn" onclick="movePlayer('up')">↑</button>
             <div></div>
             <button class="movement-btn" onclick="movePlayer('left')">←</button>
-            <button class="movement-btn" onclick="shootBall()">⚽</button>
+            <button class="movement-btn" onclick="shootBall()">⚽ SHOOT</button>
             <button class="movement-btn" onclick="movePlayer('right')">→</button>
             <div></div>
             <button class="movement-btn" onclick="movePlayer('down')">↓</button>
             <div></div>
         </div>
 
-        <div class="game-field" id="game-field">
-            <div class="field-markings"></div>
-            <div class="center-circle"></div>
-            <div class="center-spot"></div>
-            <div class="goal goal-left"></div>
-            <div class="goal goal-right"></div>
-            <!-- Players and ball will be added here -->
+        <div class="game-field-container">
+            <div class="game-field" id="game-field">
+                <div class="field-markings"></div>
+                <div class="center-circle"></div>
+                <div class="center-spot"></div>
+                <div class="penalty-area penalty-area-liverpool"></div>
+                <div class="penalty-area penalty-area-manutd"></div>
+                <div class="goal goal-liverpool"></div>
+                <div class="goal goal-manutd"></div>
+                <!-- Players and ball will be added here -->
+            </div>
         </div>
 
         <div class="events-log" id="events-log">
             <div class="event">Click START MATCH to begin playing!</div>
+            <div class="event">Use ARROW KEYS to move players and SPACE to shoot</div>
         </div>
     </div>
 
@@ -347,21 +437,33 @@
             timer: null
         };
 
-        // Players data with initial positions
+        // Real players data with positions
         const players = [
-            // Liverpool players
+            // Liverpool players (4-3-3 formation)
             { id: 1, name: "Alisson", team: "liverpool", position: "GK", x: 5, y: 50 },
-            { id: 2, name: "Van Dijk", team: "liverpool", position: "DEF", x: 20, y: 50 },
-            { id: 3, name: "Salah", team: "liverpool", position: "FWD", x: 60, y: 30 },
-            { id: 4, name: "Mane", team: "liverpool", position: "FWD", x: 60, y: 50 },
-            { id: 5, name: "Jota", team: "liverpool", position: "FWD", x: 60, y: 70 },
+            { id: 2, name: "Alexander-Arnold", team: "liverpool", position: "RB", x: 20, y: 20 },
+            { id: 3, name: "Van Dijk", team: "liverpool", position: "CB", x: 20, y: 50 },
+            { id: 4, name: "Konaté", team: "liverpool", position: "CB", x: 20, y: 80 },
+            { id: 5, name: "Robertson", team: "liverpool", position: "LB", x: 20, y: 20 },
+            { id: 6, name: "Szoboszlai", team: "liverpool", position: "CM", x: 40, y: 30 },
+            { id: 7, name: "Mac Allister", team: "liverpool", position: "CM", x: 40, y: 50 },
+            { id: 8, name: "Jones", team: "liverpool", position: "CM", x: 40, y: 70 },
+            { id: 9, name: "Salah", team: "liverpool", position: "RW", x: 65, y: 25 },
+            { id: 10, name: "Núñez", team: "liverpool", position: "ST", x: 65, y: 50 },
+            { id: 11, name: "Diaz", team: "liverpool", position: "LW", x: 65, y: 75 },
 
-            // Manchester United players
-            { id: 6, name: "De Gea", team: "manutd", position: "GK", x: 95, y: 50 },
-            { id: 7, name: "Maguire", team: "manutd", position: "DEF", x: 80, y: 50 },
-            { id: 8, name: "Ronaldo", team: "manutd", position: "FWD", x: 40, y: 30 },
-            { id: 9, name: "Fernandes", team: "manutd", position: "FWD", x: 40, y: 50 },
-            { id: 10, name: "Rashford", team: "manutd", position: "FWD", x: 40, y: 70 }
+            // Manchester United players (4-2-3-1 formation)
+            { id: 12, name: "Onana", team: "manutd", position: "GK", x: 95, y: 50 },
+            { id: 13, name: "Dalot", team: "manutd", position: "RB", x: 80, y: 20 },
+            { id: 14, name: "Varane", team: "manutd", position: "CB", x: 80, y: 40 },
+            { id: 15, name: "Martínez", team: "manutd", position: "CB", x: 80, y: 60 },
+            { id: 16, name: "Shaw", team: "manutd", position: "LB", x: 80, y: 80 },
+            { id: 17, name: "Casemiro", team: "manutd", position: "CDM", x: 65, y: 40 },
+            { id: 18, name: "Mainoo", team: "manutd", position: "CDM", x: 65, y: 60 },
+            { id: 19, name: "Fernandes", team: "manutd", position: "CAM", x: 55, y: 50 },
+            { id: 20, name: "Garnacho", team: "manutd", position: "RW", x: 45, y: 25 },
+            { id: 21, name: "Højlund", team: "manutd", position: "ST", x: 45, y: 50 },
+            { id: 22, name: "Rashford", team: "manutd", position: "LW", x: 45, y: 75 }
         ];
 
         // Keyboard controls
@@ -408,9 +510,17 @@
                 playerElement.className = `player ${player.team}`;
                 playerElement.style.left = `${player.x}%`;
                 playerElement.style.top = `${player.y}%`;
-                playerElement.textContent = player.name.charAt(0);
+                playerElement.textContent = player.position === 'GK' ? 'GK' : 
+                                          player.position.includes('B') ? 'D' : 
+                                          player.position.includes('M') ? 'M' : 'F';
                 playerElement.title = `${player.name} (${player.position}) - ${player.team}`;
                 playerElement.dataset.id = player.id;
+                
+                // Add player name label
+                const nameLabel = document.createElement('div');
+                nameLabel.className = 'player-name';
+                nameLabel.textContent = player.name;
+                playerElement.appendChild(nameLabel);
                 
                 playerElement.onclick = () => selectPlayer(player, playerElement);
                 
@@ -498,9 +608,9 @@
 
         function checkForGoalOpportunity(player) {
             // Check if player is in scoring position
-            if (player.team === 'liverpool' && player.x > 85) {
+            if (player.team === 'liverpool' && player.x > 80) {
                 addEvent(`${player.name} is in scoring position! Press SPACE to shoot!`);
-            } else if (player.team === 'manutd' && player.x < 15) {
+            } else if (player.team === 'manutd' && player.x < 20) {
                 addEvent(`${player.name} is in scoring position! Press SPACE to shoot!`);
             }
         }
@@ -516,8 +626,8 @@
             
             // Check if player is in scoring position
             const isInScoringPosition = 
-                (shooter.team === 'liverpool' && shooter.x > 85) ||
-                (shooter.team === 'manutd' && shooter.x < 15);
+                (shooter.team === 'liverpool' && shooter.x > 80) ||
+                (shooter.team === 'manutd' && shooter.x < 20);
             
             if (!isInScoringPosition) {
                 addEvent("Not in scoring position! Get closer to the opponent's goal.");
@@ -527,8 +637,16 @@
             // Shooting animation
             shooterElement.classList.add('moving');
             
-            // Calculate shot success based on position and randomness
-            const successChance = 0.7 + (Math.random() * 0.3); // 70-100% chance when in position
+            // Calculate shot success based on position and player role
+            let successChance = 0.5; // Base chance
+            
+            // Forwards have better shooting chance
+            if (shooter.position.includes('W') || shooter.position.includes('ST')) {
+                successChance = 0.7;
+            }
+            
+            // Add randomness
+            successChance += (Math.random() * 0.3);
             const isGoal = Math.random() < successChance;
 
             setTimeout(() => {
@@ -546,7 +664,7 @@
                     addEvent(`🎉 GOOOOAL! ${shooter.name} scores for ${shooter.team.toUpperCase()}!`);
                     
                     // Show goal message
-                    showMessage(`GOAL! ${shooter.team.toUpperCase()} SCORES!`);
+                    showMessage(`GOAL! ${shooter.team.toUpperCase()} SCORES!\n${shooter.name} with the finish!`);
                     
                     // Reset positions after goal
                     setTimeout(resetAfterGoal, 2000);
@@ -555,7 +673,7 @@
                     
                     // Ball goes to other team
                     const otherTeam = shooter.team === 'liverpool' ? 'manutd' : 'liverpool';
-                    const defenders = players.filter(p => p.team === otherTeam && p.position === 'DEF');
+                    const defenders = players.filter(p => p.team === otherTeam && p.position.includes('B'));
                     const randomDefender = defenders[0] || players.find(p => p.team === otherTeam);
                     
                     if (randomDefender) {
@@ -572,7 +690,7 @@
         }
 
         function resetAfterGoal() {
-            // Reset all player positions
+            // Reset all player positions to formation
             players.forEach(player => {
                 const initialPlayer = players.find(p => p.id === player.id);
                 if (initialPlayer) {
@@ -595,6 +713,20 @@
             // Recreate players and ball
             createPlayers();
             createBall();
+            
+            // Give ball to team that conceded
+            const concedingTeam = gameState.possession === 'liverpool' ? 'manutd' : 'liverpool';
+            const playersFromTeam = players.filter(p => p.team === concedingTeam && !p.position.includes('GK'));
+            const randomPlayer = playersFromTeam[Math.floor(Math.random() * playersFromTeam.length)];
+            
+            if (randomPlayer) {
+                const playerElement = document.querySelector(`.player[data-id="${randomPlayer.id}"]`);
+                if (playerElement) {
+                    setTimeout(() => {
+                        selectPlayer(randomPlayer, playerElement);
+                    }, 500);
+                }
+            }
         }
 
         function startGame() {
@@ -608,7 +740,8 @@
             document.getElementById('start-btn').disabled = true;
             document.getElementById('start-btn').textContent = 'MATCH LIVE!';
             
-            addEvent("🏁 MATCH STARTED! Control your players and score goals!");
+            addEvent("🏁 PREMIER LEAGUE MATCH STARTED!");
+            addEvent("Liverpool vs Manchester United - Anfield Stadium");
             addEvent("Use ARROW KEYS to move, SPACE to shoot when near goal!");
             
             // Start game timer
@@ -616,13 +749,27 @@
                 gameState.time--;
                 updateGameTime();
                 
+                // Random match events
+                if (gameState.time % 30 === 0) {
+                    const events = [
+                        "Great tackle in midfield!",
+                        "Beautiful passing move!",
+                        "The crowd is electric at Anfield!",
+                        "What a save by the goalkeeper!",
+                        "Incredible skill on display!"
+                    ];
+                    const randomEvent = events[Math.floor(Math.random() * events.length)];
+                    addEvent(randomEvent);
+                }
+                
                 if (gameState.time <= 0) {
                     endGame();
                 }
             }, 1000);
             
             // Give ball to random player at start
-            const randomPlayer = players[Math.floor(Math.random() * players.length)];
+            const liverpoolPlayers = players.filter(p => p.team === 'liverpool' && !p.position.includes('GK'));
+            const randomPlayer = liverpoolPlayers[Math.floor(Math.random() * liverpoolPlayers.length)];
             const playerElement = document.querySelector(`.player[data-id="${randomPlayer.id}"]`);
             if (playerElement) {
                 selectPlayer(randomPlayer, playerElement);
@@ -636,11 +783,11 @@
             const winner = gameState.score.liverpool > gameState.score.manutd ? "LIVERPOOL" : 
                          gameState.score.manutd > gameState.score.liverpool ? "MANCHESTER UNITED" : "DRAW";
             
-            addEvent(`🏆 FINAL WHISTLE! Game Over!`);
+            addEvent(`🏆 FULL TIME! Game Over!`);
             addEvent(`Final Score: Liverpool ${gameState.score.liverpool} - ${gameState.score.manutd} Manchester United`);
             addEvent(`🎉 ${winner} ${winner === "DRAW" ? "It's a draw!" : "wins the match!"}`);
             
-            showMessage(`FINAL SCORE\nLiverpool ${gameState.score.liverpool} - ${gameState.score.manutd} Man Utd\n${winner} WINS!`);
+            showMessage(`FULL TIME\nLiverpool ${gameState.score.liverpool} - ${gameState.score.manutd} Man Utd\n${winner} WINS!`);
             
             document.getElementById('start-btn').disabled = false;
             document.getElementById('start-btn').textContent = 'PLAY AGAIN';
@@ -689,12 +836,12 @@
             
             const message = document.createElement('div');
             message.className = 'game-message';
-            message.textContent = text;
+            message.innerHTML = text.replace(/\n/g, '<br>');
             document.getElementById('game-field').appendChild(message);
             
             setTimeout(() => {
                 message.remove();
-            }, 3000);
+            }, 4000);
         }
 
         function updateScore() {
