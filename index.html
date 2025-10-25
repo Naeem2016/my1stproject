@@ -17,6 +17,7 @@
             color: white;
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden;
         }
 
         .container {
@@ -36,6 +37,14 @@
             font-size: 2.5em;
             margin-bottom: 10px;
             color: white;
+        }
+
+        .instructions {
+            text-align: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
         }
 
         .game-info {
@@ -69,6 +78,7 @@
             background: #4CAF50;
             color: white;
             cursor: pointer;
+            font-weight: bold;
             transition: all 0.3s ease;
         }
 
@@ -85,13 +95,14 @@
 
         .game-field {
             width: 100%;
-            height: 500px;
+            height: 600px;
             background: #2E7D32;
             border: 4px solid white;
             border-radius: 10px;
             margin: 20px 0;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .field-markings {
@@ -112,11 +123,22 @@
             border-radius: 50%;
         }
 
+        .center-spot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+        }
+
         .goal {
             position: absolute;
             width: 150px;
-            height: 60px;
-            border: 3px solid rgba(255, 255, 255, 0.5);
+            height: 80px;
+            border: 3px solid rgba(255, 255, 255, 0.7);
             top: 50%;
             transform: translateY(-50%);
         }
@@ -133,18 +155,19 @@
 
         .player {
             position: absolute;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 0.8em;
+            font-size: 0.9em;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid;
+            transition: all 0.2s ease;
+            border: 3px solid;
             z-index: 10;
+            user-select: none;
         }
 
         .player.liverpool {
@@ -160,19 +183,25 @@
         }
 
         .player.selected {
-            box-shadow: 0 0 15px gold;
-            transform: scale(1.2);
+            box-shadow: 0 0 20px gold;
+            transform: scale(1.1);
+            z-index: 20;
+        }
+
+        .player.moving {
+            animation: pulse 0.5s ease-in-out infinite;
         }
 
         .ball {
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: 25px;
+            height: 25px;
             background: white;
             border-radius: 50%;
-            z-index: 5;
-            transition: all 0.5s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            z-index: 15;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            border: 2px solid #ccc;
         }
 
         .game-message {
@@ -180,13 +209,14 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px 40px;
-            border-radius: 10px;
-            font-size: 1.5em;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px 50px;
+            border-radius: 15px;
+            font-size: 1.8em;
             font-weight: bold;
             text-align: center;
             z-index: 100;
+            border: 3px solid gold;
         }
 
         .events-log {
@@ -199,11 +229,58 @@
         }
 
         .event {
-            padding: 5px;
-            margin: 3px 0;
+            padding: 8px;
+            margin: 5px 0;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 5px;
             font-size: 0.9em;
+            border-left: 3px solid #FF9800;
+        }
+
+        .movement-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .movement-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .movement-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .movement-btn:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes celebrate {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .celebrating {
+            animation: celebrate 0.5s ease-in-out 3;
         }
     </style>
 </head>
@@ -211,34 +288,49 @@
     <div class="container">
         <div class="header">
             <h1>⚽ Liverpool vs Manchester United</h1>
-            <p>Click players to select them, then use action buttons!</p>
+            <p>Fully Playable Football Game - Control players and score goals!</p>
+        </div>
+
+        <div class="instructions">
+            <strong>HOW TO PLAY:</strong> Click a player to select, use arrow buttons to move, press SPACE to shoot when near opponent's goal!
         </div>
 
         <div class="game-info">
             <div class="score">
-                <span id="score-liverpool">0</span> - <span id="score-manutd">0</span>
+                LIVERPOOL <span id="score-liverpool">0</span> - <span id="score-manutd">0</span> MAN UTD
             </div>
             <div class="time">
-                ⏱️ <span id="game-time">00:00</span>
+                ⏱️ <span id="game-time">03:00</span>
             </div>
             <div class="controls">
-                <button class="button" onclick="shoot()" id="shoot-btn">🎯 Shoot</button>
-                <button class="button" onclick="passBall()" id="pass-btn">⇄ Pass</button>
-                <button class="button" onclick="startGame()" id="start-btn">Start Game</button>
-                <button class="button" onclick="resetGame()">Reset</button>
+                <button class="button" onclick="startGame()" id="start-btn">START MATCH</button>
+                <button class="button" onclick="resetGame()">RESET</button>
             </div>
+        </div>
+
+        <div class="movement-controls">
+            <div></div>
+            <button class="movement-btn" onclick="movePlayer('up')">↑</button>
+            <div></div>
+            <button class="movement-btn" onclick="movePlayer('left')">←</button>
+            <button class="movement-btn" onclick="shootBall()">⚽</button>
+            <button class="movement-btn" onclick="movePlayer('right')">→</button>
+            <div></div>
+            <button class="movement-btn" onclick="movePlayer('down')">↓</button>
+            <div></div>
         </div>
 
         <div class="game-field" id="game-field">
             <div class="field-markings"></div>
             <div class="center-circle"></div>
+            <div class="center-spot"></div>
             <div class="goal goal-left"></div>
             <div class="goal goal-right"></div>
             <!-- Players and ball will be added here -->
         </div>
 
         <div class="events-log" id="events-log">
-            <div class="event">Game ready! Click "Start Game" to begin.</div>
+            <div class="event">Click START MATCH to begin playing!</div>
         </div>
     </div>
 
@@ -246,30 +338,59 @@
         // Game state
         const gameState = {
             score: { liverpool: 0, manutd: 0 },
-            time: 0,
+            time: 180, // 3 minutes
             isPlaying: false,
             selectedPlayer: null,
             ballPosition: { x: 50, y: 50 },
             possession: null,
-            events: []
+            events: [],
+            timer: null
         };
 
-        // Players data
+        // Players data with initial positions
         const players = [
             // Liverpool players
-            { id: 1, name: "Alisson", team: "liverpool", position: "GK", x: 10, y: 50 },
-            { id: 2, name: "Van Dijk", team: "liverpool", position: "DEF", x: 25, y: 50 },
+            { id: 1, name: "Alisson", team: "liverpool", position: "GK", x: 5, y: 50 },
+            { id: 2, name: "Van Dijk", team: "liverpool", position: "DEF", x: 20, y: 50 },
             { id: 3, name: "Salah", team: "liverpool", position: "FWD", x: 60, y: 30 },
             { id: 4, name: "Mane", team: "liverpool", position: "FWD", x: 60, y: 50 },
             { id: 5, name: "Jota", team: "liverpool", position: "FWD", x: 60, y: 70 },
 
             // Manchester United players
-            { id: 6, name: "De Gea", team: "manutd", position: "GK", x: 90, y: 50 },
-            { id: 7, name: "Maguire", team: "manutd", position: "DEF", x: 75, y: 50 },
+            { id: 6, name: "De Gea", team: "manutd", position: "GK", x: 95, y: 50 },
+            { id: 7, name: "Maguire", team: "manutd", position: "DEF", x: 80, y: 50 },
             { id: 8, name: "Ronaldo", team: "manutd", position: "FWD", x: 40, y: 30 },
             { id: 9, name: "Fernandes", team: "manutd", position: "FWD", x: 40, y: 50 },
             { id: 10, name: "Rashford", team: "manutd", position: "FWD", x: 40, y: 70 }
         ];
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (!gameState.isPlaying) return;
+            
+            switch(e.code) {
+                case 'ArrowUp':
+                    e.preventDefault();
+                    movePlayer('up');
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    movePlayer('down');
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    movePlayer('left');
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    movePlayer('right');
+                    break;
+                case 'Space':
+                    e.preventDefault();
+                    shootBall();
+                    break;
+            }
+        });
 
         function initializeGame() {
             createPlayers();
@@ -280,6 +401,7 @@
 
         function createPlayers() {
             const field = document.getElementById('game-field');
+            field.querySelectorAll('.player').forEach(player => player.remove());
             
             players.forEach(player => {
                 const playerElement = document.createElement('div');
@@ -287,7 +409,8 @@
                 playerElement.style.left = `${player.x}%`;
                 playerElement.style.top = `${player.y}%`;
                 playerElement.textContent = player.name.charAt(0);
-                playerElement.title = `${player.name} (${player.position})`;
+                playerElement.title = `${player.name} (${player.position}) - ${player.team}`;
+                playerElement.dataset.id = player.id;
                 
                 playerElement.onclick = () => selectPlayer(player, playerElement);
                 
@@ -297,6 +420,9 @@
 
         function createBall() {
             const field = document.getElementById('game-field');
+            const existingBall = document.getElementById('ball');
+            if (existingBall) existingBall.remove();
+            
             const ball = document.createElement('div');
             ball.className = 'ball';
             ball.id = 'ball';
@@ -321,7 +447,7 @@
             // Move ball to selected player
             moveBallToPlayer(element);
             
-            addEvent(`${player.name} (${player.team}) has the ball!`);
+            addEvent(`${player.name} has the ball!`);
         }
 
         function moveBallToPlayer(playerElement) {
@@ -337,165 +463,238 @@
             ball.style.top = `${y}%`;
         }
 
-        function shoot() {
+        function movePlayer(direction) {
+            if (!gameState.selectedPlayer || !gameState.isPlaying) {
+                addEvent("Select a player first!");
+                return;
+            }
+
+            const player = gameState.selectedPlayer.player;
+            const element = gameState.selectedPlayer.element;
+            
+            // Calculate new position
+            let newX = player.x;
+            let newY = player.y;
+            
+            switch(direction) {
+                case 'up': newY = Math.max(5, player.y - 5); break;
+                case 'down': newY = Math.min(95, player.y + 5); break;
+                case 'left': newX = Math.max(2, player.x - 5); break;
+                case 'right': newX = Math.min(98, player.x + 5); break;
+            }
+            
+            // Update player position
+            player.x = newX;
+            player.y = newY;
+            element.style.left = `${newX}%`;
+            element.style.top = `${newY}%`;
+            
+            // Move ball with player
+            moveBallToPlayer(element);
+            
+            // Check for goal scoring opportunity
+            checkForGoalOpportunity(player);
+        }
+
+        function checkForGoalOpportunity(player) {
+            // Check if player is in scoring position
+            if (player.team === 'liverpool' && player.x > 85) {
+                addEvent(`${player.name} is in scoring position! Press SPACE to shoot!`);
+            } else if (player.team === 'manutd' && player.x < 15) {
+                addEvent(`${player.name} is in scoring position! Press SPACE to shoot!`);
+            }
+        }
+
+        function shootBall() {
             if (!gameState.selectedPlayer || !gameState.isPlaying) {
                 addEvent("Select a player first!");
                 return;
             }
 
             const shooter = gameState.selectedPlayer.player;
-            const success = Math.random() < 0.6; // 60% chance to score
-
-            if (success) {
-                // Goal scored!
-                gameState.score[shooter.team]++;
-                updateScore();
-                
-                addEvent(`⚽ GOAL! ${shooter.name} scores for ${shooter.team === 'liverpool' ? 'Liverpool' : 'Manchester United'}!`);
-                
-                // Reset ball to center
-                setTimeout(() => {
-                    gameState.ballPosition = { x: 50, y: 50 };
-                    document.getElementById('ball').style.left = '50%';
-                    document.getElementById('ball').style.top = '50%';
-                    gameState.selectedPlayer = null;
-                    document.querySelectorAll('.player.selected').forEach(el => {
-                        el.classList.remove('selected');
-                    });
-                }, 1000);
-            } else {
-                addEvent(`🚫 ${shooter.name} shoots but misses!`);
-                
-                // Ball goes to other team
-                const otherTeam = shooter.team === 'liverpool' ? 'manutd' : 'liverpool';
-                const otherPlayers = players.filter(p => p.team === otherTeam);
-                const randomPlayer = otherPlayers[Math.floor(Math.random() * otherPlayers.length)];
-                const playerElement = document.querySelector(`.player[title*="${randomPlayer.name}"]`);
-                
-                setTimeout(() => {
-                    if (playerElement) {
-                        selectPlayer(randomPlayer, playerElement);
-                    }
-                }, 500);
-            }
-        }
-
-        function passBall() {
-            if (!gameState.selectedPlayer || !gameState.isPlaying) {
-                addEvent("Select a player first!");
+            const shooterElement = gameState.selectedPlayer.element;
+            
+            // Check if player is in scoring position
+            const isInScoringPosition = 
+                (shooter.team === 'liverpool' && shooter.x > 85) ||
+                (shooter.team === 'manutd' && shooter.x < 15);
+            
+            if (!isInScoringPosition) {
+                addEvent("Not in scoring position! Get closer to the opponent's goal.");
                 return;
             }
 
-            const passer = gameState.selectedPlayer.player;
-            const teammates = players.filter(p => p.team === passer.team && p.id !== passer.id);
+            // Shooting animation
+            shooterElement.classList.add('moving');
             
-            if (teammates.length > 0) {
-                const randomTeammate = teammates[Math.floor(Math.random() * teammates.length)];
-                const teammateElement = document.querySelector(`.player[title*="${randomTeammate.name}"]`);
+            // Calculate shot success based on position and randomness
+            const successChance = 0.7 + (Math.random() * 0.3); // 70-100% chance when in position
+            const isGoal = Math.random() < successChance;
+
+            setTimeout(() => {
+                shooterElement.classList.remove('moving');
                 
-                if (teammateElement) {
-                    addEvent(`${passer.name} passes to ${randomTeammate.name}`);
-                    selectPlayer(randomTeammate, teammateElement);
+                if (isGoal) {
+                    // GOAL SCORED!
+                    gameState.score[shooter.team]++;
+                    updateScore();
+                    
+                    // Goal celebration
+                    shooterElement.classList.add('celebrating');
+                    setTimeout(() => shooterElement.classList.remove('celebrating'), 1500);
+                    
+                    addEvent(`🎉 GOOOOAL! ${shooter.name} scores for ${shooter.team.toUpperCase()}!`);
+                    
+                    // Show goal message
+                    showMessage(`GOAL! ${shooter.team.toUpperCase()} SCORES!`);
+                    
+                    // Reset positions after goal
+                    setTimeout(resetAfterGoal, 2000);
+                } else {
+                    addEvent(`🚫 ${shooter.name} shoots but the goalkeeper saves it!`);
+                    
+                    // Ball goes to other team
+                    const otherTeam = shooter.team === 'liverpool' ? 'manutd' : 'liverpool';
+                    const defenders = players.filter(p => p.team === otherTeam && p.position === 'DEF');
+                    const randomDefender = defenders[0] || players.find(p => p.team === otherTeam);
+                    
+                    if (randomDefender) {
+                        const defenderElement = document.querySelector(`.player[data-id="${randomDefender.id}"]`);
+                        if (defenderElement) {
+                            setTimeout(() => {
+                                selectPlayer(randomDefender, defenderElement);
+                                addEvent(`The ball goes to ${randomDefender.name}`);
+                            }, 1000);
+                        }
+                    }
                 }
-            }
+            }, 500);
+        }
+
+        function resetAfterGoal() {
+            // Reset all player positions
+            players.forEach(player => {
+                const initialPlayer = players.find(p => p.id === player.id);
+                if (initialPlayer) {
+                    player.x = initialPlayer.x;
+                    player.y = initialPlayer.y;
+                }
+            });
+            
+            // Reset ball to center
+            gameState.ballPosition = { x: 50, y: 50 };
+            document.getElementById('ball').style.left = '50%';
+            document.getElementById('ball').style.top = '50%';
+            
+            // Deselect all players
+            gameState.selectedPlayer = null;
+            document.querySelectorAll('.player.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Recreate players and ball
+            createPlayers();
+            createBall();
         }
 
         function startGame() {
             if (gameState.isPlaying) return;
             
             gameState.isPlaying = true;
-            gameState.time = 0;
+            gameState.time = 180;
             gameState.score = { liverpool: 0, manutd: 0 };
             updateScore();
             
             document.getElementById('start-btn').disabled = true;
-            document.getElementById('shoot-btn').disabled = false;
-            document.getElementById('pass-btn').disabled = false;
+            document.getElementById('start-btn').textContent = 'MATCH LIVE!';
             
-            addEvent("Game started! Good luck to both teams!");
+            addEvent("🏁 MATCH STARTED! Control your players and score goals!");
+            addEvent("Use ARROW KEYS to move, SPACE to shoot when near goal!");
             
             // Start game timer
             gameState.timer = setInterval(() => {
-                gameState.time++;
+                gameState.time--;
                 updateGameTime();
                 
-                // Random events during game
-                if (gameState.time % 15 === 0) {
-                    randomGameEvent();
-                }
-                
-                // End game after 3 minutes
-                if (gameState.time >= 180) {
+                if (gameState.time <= 0) {
                     endGame();
                 }
             }, 1000);
             
             // Give ball to random player at start
             const randomPlayer = players[Math.floor(Math.random() * players.length)];
-            const playerElement = document.querySelector(`.player[title*="${randomPlayer.name}"]`);
+            const playerElement = document.querySelector(`.player[data-id="${randomPlayer.id}"]`);
             if (playerElement) {
                 selectPlayer(randomPlayer, playerElement);
             }
-        }
-
-        function randomGameEvent() {
-            const events = [
-                "Great defensive work!",
-                "Beautiful passing move!",
-                "The crowd is going wild!",
-                "Close call for the goalkeeper!",
-                "What a tackle!",
-                "Incredible skill on display!"
-            ];
-            
-            const randomEvent = events[Math.floor(Math.random() * events.length)];
-            addEvent(randomEvent);
         }
 
         function endGame() {
             gameState.isPlaying = false;
             clearInterval(gameState.timer);
             
-            const winner = gameState.score.liverpool > gameState.score.manutd ? "Liverpool" : 
-                         gameState.score.manutd > gameState.score.liverpool ? "Manchester United" : "Draw";
+            const winner = gameState.score.liverpool > gameState.score.manutd ? "LIVERPOOL" : 
+                         gameState.score.manutd > gameState.score.liverpool ? "MANCHESTER UNITED" : "DRAW";
             
-            addEvent(`🏆 GAME OVER! Final score: Liverpool ${gameState.score.liverpool} - ${gameState.score.manutd} Manchester United`);
-            addEvent(`🎉 ${winner} ${winner === "Draw" ? "It's a tie!" : "wins!"}`);
+            addEvent(`🏆 FINAL WHISTLE! Game Over!`);
+            addEvent(`Final Score: Liverpool ${gameState.score.liverpool} - ${gameState.score.manutd} Manchester United`);
+            addEvent(`🎉 ${winner} ${winner === "DRAW" ? "It's a draw!" : "wins the match!"}`);
+            
+            showMessage(`FINAL SCORE\nLiverpool ${gameState.score.liverpool} - ${gameState.score.manutd} Man Utd\n${winner} WINS!`);
             
             document.getElementById('start-btn').disabled = false;
-            document.getElementById('shoot-btn').disabled = true;
-            document.getElementById('pass-btn').disabled = true;
+            document.getElementById('start-btn').textContent = 'PLAY AGAIN';
         }
 
         function resetGame() {
             gameState.isPlaying = false;
             gameState.score = { liverpool: 0, manutd: 0 };
-            gameState.time = 0;
+            gameState.time = 180;
             gameState.selectedPlayer = null;
             gameState.ballPosition = { x: 50, y: 50 };
             gameState.possession = null;
-            gameState.events = [];
             
             clearInterval(gameState.timer);
             
             updateScore();
             updateGameTime();
             
-            // Reset ball position
-            document.getElementById('ball').style.left = '50%';
-            document.getElementById('ball').style.top = '50%';
-            
-            // Deselect all players
-            document.querySelectorAll('.player.selected').forEach(el => {
-                el.classList.remove('selected');
+            // Reset player positions
+            players.forEach(player => {
+                const initialPlayer = players.find(p => p.id === player.id);
+                if (initialPlayer) {
+                    player.x = initialPlayer.x;
+                    player.y = initialPlayer.y;
+                }
             });
             
+            // Recreate everything
+            createPlayers();
+            createBall();
+            
             // Clear events
-            document.getElementById('events-log').innerHTML = '<div class="event">Game reset! Click "Start Game" to play.</div>';
+            document.getElementById('events-log').innerHTML = '<div class="event">Game reset! Click START MATCH to play.</div>';
             
             document.getElementById('start-btn').disabled = false;
-            document.getElementById('shoot-btn').disabled = true;
-            document.getElementById('pass-btn').disabled = true;
+            document.getElementById('start-btn').textContent = 'START MATCH';
+            
+            // Hide any message
+            const message = document.querySelector('.game-message');
+            if (message) message.remove();
+        }
+
+        function showMessage(text) {
+            const existingMessage = document.querySelector('.game-message');
+            if (existingMessage) existingMessage.remove();
+            
+            const message = document.createElement('div');
+            message.className = 'game-message';
+            message.textContent = text;
+            document.getElementById('game-field').appendChild(message);
+            
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
         }
 
         function updateScore() {
