@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liverpool vs Manchester United - 5 vs 5</title>
+    <title>Playable Football Game - Liverpool vs Manchester United</title>
     <style>
         * {
             margin: 0;
@@ -26,8 +26,10 @@
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
         }
 
         .header h1 {
@@ -36,95 +38,36 @@
             color: white;
         }
 
-        .teams-container {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .team {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid;
-        }
-
-        .team-liverpool {
-            border-color: #C8102E;
-        }
-
-        .team-manutd {
-            border-color: #DA291C;
-        }
-
-        .team h2 {
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .team-players {
-            min-height: 200px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .player-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px;
-            margin: 5px 0;
-            border-radius: 5px;
-        }
-
-        .players-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .player-card {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .player-card:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .player-info {
+        .game-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
         }
 
-        .player-rating {
-            background: #FF9800;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.9em;
+        .score {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .time {
+            font-size: 1.2em;
         }
 
         .controls {
-            text-align: center;
-            margin: 20px 0;
+            display: flex;
+            gap: 10px;
         }
 
         .button {
-            padding: 12px 25px;
-            margin: 0 10px;
+            padding: 10px 20px;
             border: none;
             border-radius: 20px;
             background: #4CAF50;
             color: white;
-            font-size: 1em;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -134,19 +77,133 @@
             transform: translateY(-2px);
         }
 
+        .button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .game-field {
             width: 100%;
-            height: 400px;
+            height: 500px;
             background: #2E7D32;
-            border: 3px solid white;
+            border: 4px solid white;
             border-radius: 10px;
             margin: 20px 0;
             position: relative;
+            overflow: hidden;
+        }
+
+        .field-markings {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+        }
+
+        .goal {
+            position: absolute;
+            width: 150px;
+            height: 60px;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .goal-left {
+            left: 0;
+            border-right: none;
+        }
+
+        .goal-right {
+            right: 0;
+            border-left: none;
+        }
+
+        .player {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: bold;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid;
+            z-index: 10;
+        }
+
+        .player.liverpool {
+            background: #C8102E;
+            border-color: #F6EB61;
             color: white;
-            font-size: 24px;
+        }
+
+        .player.manutd {
+            background: #DA291C;
+            border-color: #FBE122;
+            color: white;
+        }
+
+        .player.selected {
+            box-shadow: 0 0 15px gold;
+            transform: scale(1.2);
+        }
+
+        .ball {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            z-index: 5;
+            transition: all 0.5s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .game-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px 40px;
+            border-radius: 10px;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            z-index: 100;
+        }
+
+        .events-log {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .event {
+            padding: 5px;
+            margin: 3px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            font-size: 0.9em;
         }
     </style>
 </head>
@@ -154,161 +211,315 @@
     <div class="container">
         <div class="header">
             <h1>⚽ Liverpool vs Manchester United</h1>
-            <p>5 vs 5 Football Game - Teams are ready!</p>
+            <p>Click players to select them, then use action buttons!</p>
         </div>
 
-        <div class="teams-container">
-            <div class="team team-liverpool">
-                <h2>🔴 Liverpool</h2>
-                <div class="team-players" id="liverpool-players">
-                    <!-- Players will be added here -->
-                </div>
-                <div>Players: <span id="liverpool-count">0</span>/5</div>
+        <div class="game-info">
+            <div class="score">
+                <span id="score-liverpool">0</span> - <span id="score-manutd">0</span>
             </div>
-            
-            <div class="team team-manutd">
-                <h2>🔴 Manchester United</h2>
-                <div class="team-players" id="manutd-players">
-                    <!-- Players will be added here -->
-                </div>
-                <div>Players: <span id="manutd-count">0</span>/5</div>
+            <div class="time">
+                ⏱️ <span id="game-time">00:00</span>
+            </div>
+            <div class="controls">
+                <button class="button" onclick="shoot()" id="shoot-btn">🎯 Shoot</button>
+                <button class="button" onclick="passBall()" id="pass-btn">⇄ Pass</button>
+                <button class="button" onclick="startGame()" id="start-btn">Start Game</button>
+                <button class="button" onclick="resetGame()">Reset</button>
             </div>
         </div>
 
-        <div class="controls">
-            <button class="button" onclick="startGame()">Start Match</button>
-            <button class="button" onclick="resetTeams()">Reset Teams</button>
+        <div class="game-field" id="game-field">
+            <div class="field-markings"></div>
+            <div class="center-circle"></div>
+            <div class="goal goal-left"></div>
+            <div class="goal goal-right"></div>
+            <!-- Players and ball will be added here -->
         </div>
 
-        <h3>Available Players:</h3>
-        <div class="players-grid" id="players-container">
-            <!-- Players will be added here -->
-        </div>
-
-        <div id="game-phase" style="display: none;">
-            <div class="game-field">
-                ⚽ Match in Progress!<br>
-                <small>Liverpool vs Manchester United</small>
-            </div>
+        <div class="events-log" id="events-log">
+            <div class="event">Game ready! Click "Start Game" to begin.</div>
         </div>
     </div>
 
     <script>
-        // Simple player data - guaranteed to work
-        const players = [
-            // Liverpool Players
-            { id: 1, name: "Alisson", position: "GK", rating: 89, team: "liverpool" },
-            { id: 2, name: "Van Dijk", position: "DEF", rating: 88, team: "liverpool" },
-            { id: 3, name: "Salah", position: "FWD", rating: 90, team: "liverpool" },
-            { id: 4, name: "Mane", position: "FWD", rating: 87, team: "liverpool" },
-            { id: 5, name: "Alexander-Arnold", position: "DEF", rating: 86, team: "liverpool" },
-            { id: 6, name: "Fabinho", position: "MID", rating: 85, team: "liverpool" },
-            { id: 7, name: "Thiago", position: "MID", rating: 86, team: "liverpool" },
-            { id: 8, name: "Diaz", position: "FWD", rating: 84, team: "liverpool" },
-            { id: 9, name: "Jota", position: "FWD", rating: 83, team: "liverpool" },
-            { id: 10, name: "Robertson", position: "DEF", rating: 85, team: "liverpool" },
+        // Game state
+        const gameState = {
+            score: { liverpool: 0, manutd: 0 },
+            time: 0,
+            isPlaying: false,
+            selectedPlayer: null,
+            ballPosition: { x: 50, y: 50 },
+            possession: null,
+            events: []
+        };
 
-            // Manchester United Players
-            { id: 11, name: "De Gea", position: "GK", rating: 87, team: "manutd" },
-            { id: 12, name: "Maguire", position: "DEF", rating: 82, team: "manutd" },
-            { id: 13, name: "Ronaldo", position: "FWD", rating: 90, team: "manutd" },
-            { id: 14, name: "Fernandes", position: "MID", rating: 88, team: "manutd" },
-            { id: 15, name: "Rashford", position: "FWD", rating: 84, team: "manutd" },
-            { id: 16, name: "Sancho", position: "FWD", rating: 83, team: "manutd" },
-            { id: 17, name: "Varane", position: "DEF", rating: 85, team: "manutd" },
-            { id: 18, name: "Pogba", position: "MID", rating: 86, team: "manutd" },
-            { id: 19, name: "Shaw", position: "DEF", rating: 82, team: "manutd" },
-            { id: 20, name: "Greenwood", position: "FWD", rating: 80, team: "manutd" }
+        // Players data
+        const players = [
+            // Liverpool players
+            { id: 1, name: "Alisson", team: "liverpool", position: "GK", x: 10, y: 50 },
+            { id: 2, name: "Van Dijk", team: "liverpool", position: "DEF", x: 25, y: 50 },
+            { id: 3, name: "Salah", team: "liverpool", position: "FWD", x: 60, y: 30 },
+            { id: 4, name: "Mane", team: "liverpool", position: "FWD", x: 60, y: 50 },
+            { id: 5, name: "Jota", team: "liverpool", position: "FWD", x: 60, y: 70 },
+
+            // Manchester United players
+            { id: 6, name: "De Gea", team: "manutd", position: "GK", x: 90, y: 50 },
+            { id: 7, name: "Maguire", team: "manutd", position: "DEF", x: 75, y: 50 },
+            { id: 8, name: "Ronaldo", team: "manutd", position: "FWD", x: 40, y: 30 },
+            { id: 9, name: "Fernandes", team: "manutd", position: "FWD", x: 40, y: 50 },
+            { id: 10, name: "Rashford", team: "manutd", position: "FWD", x: 40, y: 70 }
         ];
 
-        let liverpoolTeam = [];
-        let manutdTeam = [];
-
         function initializeGame() {
-            // Auto-select teams
-            autoSelectTeams();
-            displayPlayers();
-            updateTeamDisplays();
+            createPlayers();
+            createBall();
+            updateScore();
+            updateGameTime();
         }
 
-        function autoSelectTeams() {
-            // Reset teams
-            liverpoolTeam = [];
-            manutdTeam = [];
-
-            // Select Liverpool players (first 5 Liverpool players)
-            const liverpoolPlayers = players.filter(p => p.team === "liverpool").slice(0, 5);
-            liverpoolTeam.push(...liverpoolPlayers);
-
-            // Select Manchester United players (first 5 Man Utd players)
-            const manutdPlayers = players.filter(p => p.team === "manutd").slice(0, 5);
-            manutdTeam.push(...manutdPlayers);
-        }
-
-        function displayPlayers() {
-            const container = document.getElementById('players-container');
-            container.innerHTML = '';
-
+        function createPlayers() {
+            const field = document.getElementById('game-field');
+            
             players.forEach(player => {
-                const playerCard = document.createElement('div');
-                playerCard.className = 'player-card';
-                playerCard.innerHTML = `
-                    <div class="player-info">
-                        <div>
-                            <strong>${player.name}</strong>
-                            <div>${player.position} | ${player.team === 'liverpool' ? 'LIV' : 'MU'}</div>
-                        </div>
-                        <span class="player-rating">${player.rating}</span>
-                    </div>
-                `;
-                container.appendChild(playerCard);
+                const playerElement = document.createElement('div');
+                playerElement.className = `player ${player.team}`;
+                playerElement.style.left = `${player.x}%`;
+                playerElement.style.top = `${player.y}%`;
+                playerElement.textContent = player.name.charAt(0);
+                playerElement.title = `${player.name} (${player.position})`;
+                
+                playerElement.onclick = () => selectPlayer(player, playerElement);
+                
+                field.appendChild(playerElement);
             });
         }
 
-        function updateTeamDisplays() {
-            // Update Liverpool team
-            const liverpoolContainer = document.getElementById('liverpool-players');
-            liverpoolContainer.innerHTML = liverpoolTeam.map(player => `
-                <div class="player-item">
-                    ${player.name} (${player.position}) - ${player.rating}
-                </div>
-            `).join('');
-            document.getElementById('liverpool-count').textContent = liverpoolTeam.length;
-
-            // Update Manchester United team
-            const manutdContainer = document.getElementById('manutd-players');
-            manutdContainer.innerHTML = manutdTeam.map(player => `
-                <div class="player-item">
-                    ${player.name} (${player.position}) - ${player.rating}
-                </div>
-            `).join('');
-            document.getElementById('manutd-count').textContent = manutdTeam.length;
+        function createBall() {
+            const field = document.getElementById('game-field');
+            const ball = document.createElement('div');
+            ball.className = 'ball';
+            ball.id = 'ball';
+            ball.style.left = `${gameState.ballPosition.x}%`;
+            ball.style.top = `${gameState.ballPosition.y}%`;
+            field.appendChild(ball);
         }
 
-        function startGame() {
-            if (liverpoolTeam.length === 5 && manutdTeam.length === 5) {
-                document.getElementById('game-phase').style.display = 'block';
-                alert('Match started! Liverpool vs Manchester United');
+        function selectPlayer(player, element) {
+            if (!gameState.isPlaying) return;
+            
+            // Deselect previous player
+            document.querySelectorAll('.player.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+
+            // Select new player
+            element.classList.add('selected');
+            gameState.selectedPlayer = { player, element };
+            gameState.possession = player.team;
+            
+            // Move ball to selected player
+            moveBallToPlayer(element);
+            
+            addEvent(`${player.name} (${player.team}) has the ball!`);
+        }
+
+        function moveBallToPlayer(playerElement) {
+            const ball = document.getElementById('ball');
+            const rect = playerElement.getBoundingClientRect();
+            const fieldRect = document.getElementById('game-field').getBoundingClientRect();
+            
+            const x = ((rect.left + rect.width / 2 - fieldRect.left) / fieldRect.width) * 100;
+            const y = ((rect.top + rect.height / 2 - fieldRect.top) / fieldRect.height) * 100;
+            
+            gameState.ballPosition = { x, y };
+            ball.style.left = `${x}%`;
+            ball.style.top = `${y}%`;
+        }
+
+        function shoot() {
+            if (!gameState.selectedPlayer || !gameState.isPlaying) {
+                addEvent("Select a player first!");
+                return;
+            }
+
+            const shooter = gameState.selectedPlayer.player;
+            const success = Math.random() < 0.6; // 60% chance to score
+
+            if (success) {
+                // Goal scored!
+                gameState.score[shooter.team]++;
+                updateScore();
                 
-                // Simulate match result
+                addEvent(`⚽ GOAL! ${shooter.name} scores for ${shooter.team === 'liverpool' ? 'Liverpool' : 'Manchester United'}!`);
+                
+                // Reset ball to center
                 setTimeout(() => {
-                    const liverpoolScore = Math.floor(Math.random() * 5);
-                    const manutdScore = Math.floor(Math.random() * 5);
-                    alert(`Match finished!\nLiverpool ${liverpoolScore} - ${manutdScore} Manchester United`);
-                }, 2000);
+                    gameState.ballPosition = { x: 50, y: 50 };
+                    document.getElementById('ball').style.left = '50%';
+                    document.getElementById('ball').style.top = '50%';
+                    gameState.selectedPlayer = null;
+                    document.querySelectorAll('.player.selected').forEach(el => {
+                        el.classList.remove('selected');
+                    });
+                }, 1000);
             } else {
-                alert('Both teams need 5 players!');
+                addEvent(`🚫 ${shooter.name} shoots but misses!`);
+                
+                // Ball goes to other team
+                const otherTeam = shooter.team === 'liverpool' ? 'manutd' : 'liverpool';
+                const otherPlayers = players.filter(p => p.team === otherTeam);
+                const randomPlayer = otherPlayers[Math.floor(Math.random() * otherPlayers.length)];
+                const playerElement = document.querySelector(`.player[title*="${randomPlayer.name}"]`);
+                
+                setTimeout(() => {
+                    if (playerElement) {
+                        selectPlayer(randomPlayer, playerElement);
+                    }
+                }, 500);
             }
         }
 
-        function resetTeams() {
-            autoSelectTeams();
-            updateTeamDisplays();
-            document.getElementById('game-phase').style.display = 'none';
-            alert('Teams reset!');
+        function passBall() {
+            if (!gameState.selectedPlayer || !gameState.isPlaying) {
+                addEvent("Select a player first!");
+                return;
+            }
+
+            const passer = gameState.selectedPlayer.player;
+            const teammates = players.filter(p => p.team === passer.team && p.id !== passer.id);
+            
+            if (teammates.length > 0) {
+                const randomTeammate = teammates[Math.floor(Math.random() * teammates.length)];
+                const teammateElement = document.querySelector(`.player[title*="${randomTeammate.name}"]`);
+                
+                if (teammateElement) {
+                    addEvent(`${passer.name} passes to ${randomTeammate.name}`);
+                    selectPlayer(randomTeammate, teammateElement);
+                }
+            }
         }
 
-        // Initialize the game when page loads
+        function startGame() {
+            if (gameState.isPlaying) return;
+            
+            gameState.isPlaying = true;
+            gameState.time = 0;
+            gameState.score = { liverpool: 0, manutd: 0 };
+            updateScore();
+            
+            document.getElementById('start-btn').disabled = true;
+            document.getElementById('shoot-btn').disabled = false;
+            document.getElementById('pass-btn').disabled = false;
+            
+            addEvent("Game started! Good luck to both teams!");
+            
+            // Start game timer
+            gameState.timer = setInterval(() => {
+                gameState.time++;
+                updateGameTime();
+                
+                // Random events during game
+                if (gameState.time % 15 === 0) {
+                    randomGameEvent();
+                }
+                
+                // End game after 3 minutes
+                if (gameState.time >= 180) {
+                    endGame();
+                }
+            }, 1000);
+            
+            // Give ball to random player at start
+            const randomPlayer = players[Math.floor(Math.random() * players.length)];
+            const playerElement = document.querySelector(`.player[title*="${randomPlayer.name}"]`);
+            if (playerElement) {
+                selectPlayer(randomPlayer, playerElement);
+            }
+        }
+
+        function randomGameEvent() {
+            const events = [
+                "Great defensive work!",
+                "Beautiful passing move!",
+                "The crowd is going wild!",
+                "Close call for the goalkeeper!",
+                "What a tackle!",
+                "Incredible skill on display!"
+            ];
+            
+            const randomEvent = events[Math.floor(Math.random() * events.length)];
+            addEvent(randomEvent);
+        }
+
+        function endGame() {
+            gameState.isPlaying = false;
+            clearInterval(gameState.timer);
+            
+            const winner = gameState.score.liverpool > gameState.score.manutd ? "Liverpool" : 
+                         gameState.score.manutd > gameState.score.liverpool ? "Manchester United" : "Draw";
+            
+            addEvent(`🏆 GAME OVER! Final score: Liverpool ${gameState.score.liverpool} - ${gameState.score.manutd} Manchester United`);
+            addEvent(`🎉 ${winner} ${winner === "Draw" ? "It's a tie!" : "wins!"}`);
+            
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('shoot-btn').disabled = true;
+            document.getElementById('pass-btn').disabled = true;
+        }
+
+        function resetGame() {
+            gameState.isPlaying = false;
+            gameState.score = { liverpool: 0, manutd: 0 };
+            gameState.time = 0;
+            gameState.selectedPlayer = null;
+            gameState.ballPosition = { x: 50, y: 50 };
+            gameState.possession = null;
+            gameState.events = [];
+            
+            clearInterval(gameState.timer);
+            
+            updateScore();
+            updateGameTime();
+            
+            // Reset ball position
+            document.getElementById('ball').style.left = '50%';
+            document.getElementById('ball').style.top = '50%';
+            
+            // Deselect all players
+            document.querySelectorAll('.player.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Clear events
+            document.getElementById('events-log').innerHTML = '<div class="event">Game reset! Click "Start Game" to play.</div>';
+            
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('shoot-btn').disabled = true;
+            document.getElementById('pass-btn').disabled = true;
+        }
+
+        function updateScore() {
+            document.getElementById('score-liverpool').textContent = gameState.score.liverpool;
+            document.getElementById('score-manutd').textContent = gameState.score.manutd;
+        }
+
+        function updateGameTime() {
+            const minutes = Math.floor(gameState.time / 60);
+            const seconds = gameState.time % 60;
+            document.getElementById('game-time').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function addEvent(message) {
+            const eventsLog = document.getElementById('events-log');
+            const eventElement = document.createElement('div');
+            eventElement.className = 'event';
+            eventElement.textContent = message;
+            eventsLog.appendChild(eventElement);
+            eventsLog.scrollTop = eventsLog.scrollHeight;
+        }
+
+        // Initialize game when page loads
         window.onload = initializeGame;
     </script>
 </body>
