@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5 vs 5 Football Game</title>
+    <style>
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .teams-container { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .team { width: 45%; border: 2px solid #333; padding: 15px; border-radius: 10px; }
+        .team-a { border-color: #007bff; }
+        .team-b { border-color: #dc3545; }
+        .players-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin: 20px 0; }
+        .player-card { border: 1px solid #ddd; padding: 10px; border-radius: 5px; cursor: pointer; }
+        .player-card:hover { background-color: #f8f9fa; }
+        .player-card.selected { background-color: #d4edda; }
+        .player-card.disabled { opacity: 0.5; cursor: not-allowed; }
+        .button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚽ 5 vs 5 Football Game</h1>
+        
+        <div class="teams-container">
+            <div class="team team-a">
+                <h2>Team A</h2>
+                <div id="teamA-players"></div>
+                <div>Players: <span id="teamA-count">0</span>/5</div>
+            </div>
+            
+            <div class="team team-b">
+                <h2>Team B</h2>
+                <div id="teamB-players"></div>
+                <div>Players: <span id="teamB-count">0</span>/5</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="button btn-primary" onclick="switchTeam()">Switch Team (Current: <span id="current-team">A</span>)</button>
+            <button class="button btn-success" onclick="startGame()" id="start-btn" disabled>Start Game</button>
+            <button class="button btn-danger" onclick="resetGame()">Reset Game</button>
+        </div>
+
+        <h3>Available Players</h3>
+        <div class="players-grid" id="players-container"></div>
+
+        <div id="match-result"></div>
+    </div>
+
+    <script>
+        // Player database and game logic would go here
+        // This is the simplified version for the HTML interface
+    </script>
+</body>
+</html>
